@@ -11,7 +11,7 @@ from sklearn.metrics import jaccard_similarity_score
 from sklearn.metrics import f1_score
 from scipy import interp
 
-def eval(y_true, y_pred, path, n_class):
+def eval(y_true, y_pred, path, n_class, print_flag=True):
     '''
     y_true:    The true values of multiple classifications
     y_pred:    Predictive values of multiple classifications
@@ -135,14 +135,15 @@ def eval(y_true, y_pred, path, n_class):
     print(classification_report)
 
     ## Save the result
-    file_perf = open(path+'performances.txt', 'w')
-    file_perf.write("micro-average ROC curve: "+str(auc_micro)
-                        +"\nmacro-average ROC curve: "+str(auc_macro)
-                        +"\nF1 score (F-measure) micro: " +str(F1_score_micro)
-                        +"\nF1 score (F-measure) macro: " +str(F1_score_macro)
-                        +"\n\nConfusion matrix:\n"
-                        +str(confusion)
-                        +"\n\nclassification_report:\n"
-                        +str(classification_report)
-                        )
-    file_perf.close()
+    if print_flag:
+        file_perf = open(path+'performances.txt', 'w')
+        file_perf.write("micro-average ROC curve: "+str(auc_micro)
+                            +"\nmacro-average ROC curve: "+str(auc_macro)
+                            +"\nF1 score (F-measure) micro: " +str(F1_score_micro)
+                            +"\nF1 score (F-measure) macro: " +str(F1_score_macro)
+                            +"\n\nConfusion matrix:\n"
+                            +str(confusion)
+                            +"\n\nclassification_report:\n"
+                            +str(classification_report)
+                            )
+        file_perf.close()
