@@ -1,5 +1,4 @@
 import os
-# os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 import numpy as np
 import scipy
 import matplotlib.pyplot as plt
@@ -13,12 +12,24 @@ from sklearn import metrics
 from scipy.ndimage.morphology import binary_erosion
 
 
-def eval(y_true, y_scores, output_folder, cutoff):
+def eval(y_true, y_scores, output_folder, cutoff, print_flag=True):
     '''
     y_true:    The true values of multiple classifications
-    y_scores:  Multiple classifications prediction scores
+    y_scores:  Multiple classifications prediction scores  example：y_scores = model.predict_proba(X_test)
+    return:
+            1. AUROC
+            2. AUPRC
+            3. Confusion matrix
+            4. Classification report
+            5. Jaccard similarity score
+            6. accuracy
+            7. sensitivity
+            8. specificity
+            9. precision
+            10. F1 score
     '''
-    y_scores = np.where(y_scores>cutoff, 1, 0)
+    y_scores_ = y_scores[:, 1]
+    y_scores = np.where(y_scores_ > cutoff, 1, 0)
 
     # Area under the ROC curve
     fpr, tpr, thresholds = roc_curve((y_true), y_scores)
@@ -88,19 +99,20 @@ def eval(y_true, y_scores, output_folder, cutoff):
     print ("\nF1 score (F-measure): " +str(F1_score))
 
     # Save the results
-    file_perf = open(output_folder+'performances.txt', 'w')
-    file_perf.write("Area under the ROC curve: "+str(AUC_ROC)
-                    + "\nArea under Precision-Recall curve: " +str(AUC_prec_rec)
-                    + "\nJaccard similarity score: " +str(jaccard_index)
-                    + "\nF1 score (F-measure): " +str(F1_score)
-                    +"\n\nConfusion matrix:"
-                    +str(confusion)
-                    +"\nClassification report:"
-                    +str(classification_report)
-                    +"\nACCURACY: " +str(accuracy)
-                    +"\nSENSITIVITY: " +str(sensitivity)
-                    +"\nSPECIFICITY: " +str(specificity)
-                    +"\nPRECISION: " +str(precision)
-                    )
-    file_perf.close()
+    if print_flag:
+        file_perf = open(output_folder+'performances.txt', 'w')
+        file_perf.write("Area under the ROC curve: "+str(AUC_ROC)
+                        + "\nArea under Precision-Recall curve: " +str(AUC_prec_rec)
+                        + "\nJaccard similarity score: " +str(jaccard_index)
+                        + "\nF1 score (F-measure): " +str(F1_score)
+                        +"\n\nConfusion matrix:"
+                        +str(confusion)
+                        +"\nClassification report:"
+                        +str(classification_report)
+                        +"\nACCURACY: " +str(accuracy)
+                        +"\nSENSITIVITY: " +str(sensitivity)
+                        +"\nSPECIFICITY: " +str(specificity)
+                        +"\nPRECISION: " +str(precision)
+                        )
+        file_perf.close()
 
